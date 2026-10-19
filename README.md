@@ -95,10 +95,36 @@ This repository is organized into detailed technical chapters:
    *Statutory penalties under DMCA § 1201, CFAA, Indian IT Act 2000 (§ 43/66), DPDP Act 2023, and why AI cloning permanently contaminates corporate IP.*
 7. [**Chapter 07: The Zero-Trust Developer Safety Blueprint**](docs/07-zero-trust-hardening-guide.md)  
    *Hardened Docker configurations, Firecracker microVM recipes, kernel egress blocking, and the 5 immutable rules of safe analysis.*
-8. [**Case Study: End-to-End Audit of `SyntheticFinTechApp`**](case-studies/synthetic-finapp-audit.md)  
-   *Complete synthetic case study walking through decompilation traces, attention weight hijacking, and host credential exfiltration telemetry.*
+8. [**Case Study 01: End-to-End Audit of `SyntheticFinTechApp`**](case-studies/synthetic-finapp-audit.md)  
+   *Financial client decompilation traces, attention weight hijacking, and host credential exfiltration telemetry.*
+9. [**Case Study 02: Reverse Engineering of a Viral 3D Aircraft Flight Radar Client (`AeroRadar-Pro`)**](case-studies/aircraft-radar-app-audit.md)  
+   *ADS-B Mode-S transponder frame parsing, callsign emergency prompt injections, and side-by-side telemetry proof showing how our sandbox completely neutralizes the attack.*
+10. [**Zero-Trust Sandbox Quickstart Guide**](sandbox/README.md)  
+    *Turnkey Docker container sandbox enforcing complete network severance (`--network none`), non-root execution (UID 1001), capability dropping, and automated isolation verification.*
 
 ---
+
+## 5. Zero-Trust Sandbox Environment
+
+To ensure developers **never run reverse-engineering tools on their bare-metal workstations**, this repository includes a production-grade, hardened container sandbox:
+
+```powershell
+# Windows (PowerShell)
+.\sandbox\run-sandbox.ps1 -VerifyOnly  # Run automated containment checks
+.\sandbox\run-sandbox.ps1              # Launch interactive, isolated shell
+
+# Linux / macOS (Bash)
+./sandbox/run-sandbox.sh --verify      # Run automated containment checks
+./sandbox/run-sandbox.sh               # Launch interactive, isolated shell
+```
+
+The sandbox is verified against **CIS Docker Benchmark v1.6.0** and **NIST SP 800-190**, guaranteeing:
+- **Zero Outbound Internet Egress (`network_mode: none`)**
+- **Non-Root Execution (`USER analyst`, UID 1001)**
+- **All Capabilities Stripped (`cap_drop: [ALL]`)**
+- **Immutable Root Filesystem (`read_only: true`)**
+- **Zero Host Filesystem Leakage (RAM `tmpfs` only)**
+
 
 ## 5. Summary Matrix: Viral Hype vs Cold Reality
 

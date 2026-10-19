@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  rea-sandbox:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rea-security-sandbox:1.0.0
+    container_name: rea_zero_trust_sandbox
+    hostname: isolated-sandbox
+    
+    # 1. Total Network Severance: No external network interface
+    network_mode: none
+    
+    # 2. Kernel Capability Stripping: Drop all privileges
+    cap_drop:
+      - ALL
+      
+    # 3. Privilege Escalation Prevention
+    security_opt:
+      - no-new-privileges:true
+      
+    # 4. Immutable Root Filesystem: Prevents malware installation
+    read_only: true
+    
+    # 5. In-Memory Volatile Workspaces: RAM only, cleared on container exit
+    tmpfs:
+      - /workspace:rw,size=512m,noexec,nosuid,nodev
+      - /tmp:rw,size=256m,noexec,nosuid,nodev
+      - /run:rw,size=64m,noexec,nosuid,nodev
+      
+    # 6. Algorithmic Complexity / DoS Resource Bounds
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+          pids: 100
+          
+    # 7. Interactive Terminal Support
+    stdin_open: true
+    tty: true
